@@ -1,0 +1,15 @@
+# Bibliotecas PHP necessárias para o projeto clonesapp_websocker
+
+# Extensões PHP
+php-mysql
+php-json
+php-mbstring
+php-sockets
+php-pdo
+php-pdo_mysql
+
+# Servidor WebSocket em PHP
+ratchet/ratchet
+
+# Gerenciador de dependências
+composer
