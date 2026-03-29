@@ -1,12 +1,5 @@
 <?php
-/**
- * Classe responsável por gerenciar conversas e mensagens.
- *
- * Funções principais:
- * - Criar ou localizar chat entre dois usuários
- * - Salvar mensagens no banco
- * - Buscar histórico de mensagens
- */
+
 class Chat
 {
     private $conn;
@@ -19,19 +12,21 @@ class Chat
     // Retorna o chat_id entre dois usuários (cria se não existir)
     public function getOrCreateChat($user1, $user2)
     {
-        // Verifica se já existe
         $sql = "SELECT id FROM chats 
                 WHERE (user1_id = :u1 AND user2_id = :u2)
                    OR (user1_id = :u2 AND user2_id = :u1)
                 LIMIT 1";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':u1', $user1);
-        $stmt->bindParam(':u2', $user2);
-        $stmt->execute();
+        $stmt->execute([
+            ':u1' => $user1,
+            ':u2' => $user2
+        ]);
 
-        if ($stmt->rowCount() > 0) {
-            return $stmt->fetch(PDO::FETCH_ASSOC)['id'];
+        $chat = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($chat) {
+            return $chat['id'];
         }
 
         // Se não existir, cria
@@ -39,25 +34,35 @@ class Chat
                 VALUES (:u1, :u2)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':u1', $user1);
-        $stmt->bindParam(':u2', $user2);
-        $stmt->execute();
+        $stmt->execute([
+            ':u1' => $user1,
+            ':u2' => $user2
+        ]);
 
         return $this->conn->lastInsertId();
     }
 
-    // Carregar mensagens de um chat
-    public function carregarMensagens($chatId)
+    // Carregar mensagens entre dois usuários
+    public function carregarMensagens($userId, $contatoId)
     {
-        $sql = "SELECT * FROM messages 
+        // 1. Obter ou criar chat
+        $chatId = $this->getOrCreateChat($userId, $contatoId);
+
+        // 2. Buscar mensagens
+        $sql = "SELECT sender_id, conteudo, enviado_em 
+                FROM messages 
                 WHERE chat_id = :chatId
                 ORDER BY enviado_em ASC";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':chatId', $chatId);
-        $stmt->execute();
+        $stmt->execute([':chatId' => $chatId]);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $mensagens = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return [
+            "chat_id" => $chatId,
+            "mensagens" => $mensagens
+        ];
     }
 
     // Enviar mensagem
@@ -67,10 +72,10 @@ class Chat
                 VALUES (:chatId, :senderId, :conteudo)";
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindParam(':chatId', $chatId);
-        $stmt->bindParam(':senderId', $senderId);
-        $stmt->bindParam(':conteudo', $conteudo);
-
-        return $stmt->execute();
+        return $stmt->execute([
+            ':chatId' => $chatId,
+            ':senderId' => $senderId,
+            ':conteudo' => $conteudo
+        ]);
     }
 }

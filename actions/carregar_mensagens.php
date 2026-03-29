@@ -2,31 +2,26 @@
 session_start();
 
 if (!isset($_SESSION['user_id'])) {
-    echo json_encode([]);
+    echo json_encode(["erro" => "não logado"]);
     exit;
 }
-
-if (!isset($_GET['contato_id'])) {
-    echo json_encode([]);
-    exit;
-}
-
-$meuId = $_SESSION['user_id'];
-$contatoId = intval($_GET['contato_id']);
 
 require_once "../config/db.php";
 require_once "../src/Chat.php";
 
-$chat = new Chat($pdo);
+$db = new Database();
+$pdo = $db->connect();
 
-// Obtém ou cria o chat entre os dois usuários
-$chatId = $chat->getOrCreateChat($meuId, $contatoId);
+$chatModel = new Chat($pdo);
 
-// Carrega as mensagens
-$mensagens = $chat->carregarMensagens($chatId);
+$meuId = $_SESSION['user_id'];
+$contatoId = $_GET['contato_id'] ?? null;
 
-// Retorna também o chat_id
-echo json_encode([
-    "chat_id" => $chatId,
-    "mensagens" => $mensagens
-]);
+if (!$contatoId) {
+    echo json_encode(["erro" => "contato inválido"]);
+    exit;
+}
+
+$resultado = $chatModel->carregarMensagens($meuId, $contatoId);
+
+echo json_encode($resultado);
