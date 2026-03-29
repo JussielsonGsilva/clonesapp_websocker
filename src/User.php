@@ -20,7 +20,7 @@ class User
     // Buscar todos os usuários, exceto o usuário logado
     public function listarUsuarios($meuId)
     {
-        $sql = "SELECT id, nome FROM usuarios WHERE id != :id ORDER BY nome ASC";
+        $sql = "SELECT id, nome FROM users WHERE id != :id ORDER BY nome ASC";
         $stmt = $this->conn->prepare($sql);
         $stmt->bindParam(':id', $meuId);
         $stmt->execute();

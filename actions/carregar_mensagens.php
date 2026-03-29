@@ -25,4 +25,8 @@ $chatId = $chat->getOrCreateChat($meuId, $contatoId);
 // Carrega as mensagens
 $mensagens = $chat->carregarMensagens($chatId);
 
-echo json_encode($mensagens);
+// Retorna também o chat_id
+echo json_encode([
+    "chat_id" => $chatId,
+    "mensagens" => $mensagens
+]);

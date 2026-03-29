@@ -199,7 +199,7 @@ $nomeUsuario = $_SESSION['user_nome'];
 
 <script>
 function carregarContatos() {
-    fetch('actions/buscar_contatos.php')
+    fetch('/clonesapp_websocker/actions/buscar_contatos.php')
         .then(response => response.json())
         .then(contatos => {
             const lista = document.getElementById('lista-contatos');
@@ -224,14 +224,41 @@ function carregarContatos() {
 // Carrega ao abrir a página
 carregarContatos();
 
-// Função que será completada na próxima etapa
+// Função para abrir o chat e carregar mensagens
+let chatAtual = null;
+let contatoAtual = null;
+
 function abrirChat(contatoId, nomeContato) {
-    console.log("Abrindo chat com:", contatoId);
+    contatoAtual = contatoId;
 
     document.getElementById("chat-topo").innerText = nomeContato;
 
-    // Próxima etapa: carregar mensagens reais
+    fetch(`/clonesapp_websocker/actions/carregar_mensagens.php?contato_id=${contatoId}`)
+        .then(response => response.json())
+        .then(data => {
+            chatAtual = data.chat_id;
+
+            const mensagensDiv = document.getElementById("mensagens");
+            mensagensDiv.innerHTML = "";
+
+            data.mensagens.forEach(msg => {
+                const div = document.createElement("div");
+                div.classList.add("msg");
+
+                if (msg.sender_id == <?= $_SESSION['user_id'] ?>) {
+                    div.classList.add("msg-enviada");
+                } else {
+                    div.classList.add("msg-recebida");
+                }
+
+                div.innerText = msg.conteudo;
+                mensagensDiv.appendChild(div);
+            });
+
+            mensagensDiv.scrollTop = mensagensDiv.scrollHeight;
+        });
 }
+
 </script>
 
 </body>
