@@ -28,9 +28,10 @@ $chat = new Chat($pdo);
 $chatId = $chat->getOrCreateChat($meuId, $contatoId);
 
 // Envia a mensagem
-$ok = $chat->enviarMensagem($chatId, $meuId, $mensagem);
+$messageId = $chat->enviarMensagem($chatId, $meuId, $mensagem);
 
 echo json_encode([
-    'status' => $ok ? 'success' : 'error',
-    'chat_id' => $chatId
+    'status' => 'success',
+    'chat_id' => $chatId,
+    'message_id' => $messageId
 ]);

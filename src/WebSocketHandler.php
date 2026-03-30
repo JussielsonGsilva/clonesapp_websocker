@@ -46,25 +46,45 @@ class WebSocketHandler implements MessageComponentInterface
         // Enviar mensagem
         if ($data["acao"] === "enviar_mensagem") {
 
+            $messageId = $data["message_id"];
             $sender = $data["sender_id"];
             $receiver = $data["receiver_id"];
             $conteudo = $data["conteudo"];
 
-            echo "Mensagem de $sender para $receiver: $conteudo\n";
+            echo "Mensagem de $sender para $receiver: $conteudo (ID: $messageId)\n";
 
             // Se o destinatário está conectado
             if (isset($this->usuarios[$receiver])) {
 
                 $destConn = $this->usuarios[$receiver];
 
+                // Envia a mensagem ao destinatário
                 $destConn->send(json_encode([
                     "acao" => "nova_mensagem",
+                    "message_id" => $messageId,
                     "sender_id" => $sender,
                     "receiver_id" => $receiver,
                     "conteudo" => $conteudo
                 ]));
 
                 echo "Mensagem enviada ao usuário $receiver\n";
+
+                // Atualizar status para delivered
+                require_once __DIR__ . "/../config/db.php";
+                require_once __DIR__ . "/Chat.php";
+
+                $db = new \Database();
+                $pdo = $db->connect();
+                $chat = new \Chat($pdo);
+
+                $chat->atualizarStatus($messageId, "delivered");
+
+                // Avisar o remetente que foi entregue
+                $from->send(json_encode([
+                    "acao" => "mensagem_entregue",
+                    "message_id" => $messageId
+                ]));
+
             } else {
                 echo "Usuário $receiver não está conectado.\n";
             }

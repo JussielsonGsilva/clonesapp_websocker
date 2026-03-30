@@ -119,6 +119,7 @@ Para testar em PC + celular, você deve usar o IP da sua máquina, não localhos
 const socket = new WebSocket("ws://seu_ip:8080");
 
 
+
 ## ▶️ Como iniciar o servidor WebSocket
 No terminal, dentro da pasta do projeto:
 /opt/lampp/bin/php ws/server.php

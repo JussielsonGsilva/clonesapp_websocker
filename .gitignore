@@ -1,0 +1,74 @@
+# ============================
+# SISTEMA / AMBIENTE
+# ============================
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+error_log
+
+# Cache
+cache/
+tmp/
+*.cache
+
+# ============================
+# PHP / COMPOSER
+# ============================
+
+# Pasta vendor (dependências)
+vendor/
+
+# Arquivos de configuração sensíveis
+config/db.php
+
+# ============================
+# XAMPP / LAMPP
+# ============================
+
+# Arquivos temporários do servidor
+xampp/
+lampp/
+htdocs/error_log
+
+# ============================
+# NODE / FRONTEND (caso use futuramente)
+# ============================
+
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ============================
+# SISTEMA DE CHAT
+# ============================
+
+# Uploads futuros (imagens, áudios, etc.)
+public/uploads/
+public/media/
+
+# ============================
+# AMBIENTE DE DESENVOLVIMENTO
+# ============================
+
+.env
+.env.local
+.env.*.local
+
+# ============================
+# IDEs / EDITORES
+# ============================
+
+# VSCode
+.vscode/
+
+# PHPStorm / JetBrains
+.idea/
+
+# Sublime
+*.sublime-project
+*.sublime-workspace

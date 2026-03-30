@@ -65,6 +65,18 @@ class Chat
         ];
     }
 
+    // Isso permite que o WebSocket atualize o status no banco.
+    public function atualizarStatus($messageId, $status)
+    {
+    $sql = "UPDATE messages SET status = :status WHERE id = :id";
+    $stmt = $this->conn->prepare($sql);
+    $stmt->execute([
+        ':status' => $status,
+        ':id' => $messageId
+    ]);
+    }
+
+
     // Enviar mensagem
     public function enviarMensagem($chatId, $senderId, $conteudo)
     {
@@ -77,5 +89,7 @@ class Chat
             ':senderId' => $senderId,
             ':conteudo' => $conteudo
         ]);
+
+        return $this->conn->lastInsertId(); // <-- ESSA LINHA É O QUE IMPORTA
     }
 }
