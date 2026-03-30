@@ -1,32 +1,4 @@
-let contatoSelecionado = null;
 let meuId = document.body.getAttribute("data-user-id");
-
-// Quando clicar em um contato
-function abrirChat(contatoId, nome) {
-    contatoSelecionado = contatoId;
-
-    document.getElementById("nomeContato").innerText = nome;
-
-    carregarMensagens();
-}
-
-// Carregar mensagens do backend
-function carregarMensagens() {
-    if (!contatoSelecionado) return;
-
-    fetch(`/clonesapp_websocker/actions/carregar_mensagens.php?contato_id=${contatoSelecionado}`)
-        .then(r => r.json())
-        .then(data => {
-            const area = document.getElementById("chatMensagens");
-            area.innerHTML = "";
-
-            data.mensagens.forEach(msg => {
-                adicionarMensagemNaTela(msg);
-            });
-
-            scrollChatParaBaixo();
-        });
-}
 
 // Enviar mensagem
 document.getElementById("btnEnviar").addEventListener("click", enviarMensagem);
@@ -35,10 +7,21 @@ function enviarMensagem() {
     const input = document.getElementById("campoMensagem");
     const texto = input.value.trim();
 
-    if (texto === "" || !contatoSelecionado) return;
+    if (texto === "" || !contatoAtual) return;
 
+    // Envia via WebSocket
+    socket.send(JSON.stringify({
+        acao: "enviar_mensagem",
+        sender_id: USER_ID,
+        receiver_id: contatoAtual,
+        conteudo: texto
+    }));
+
+    input.value = "";
+
+    // Envia para o backend salvar no banco
     const formData = new FormData();
-    formData.append("contato_id", contatoSelecionado);
+    formData.append("contato_id", contatoAtual);
     formData.append("mensagem", texto);
 
     fetch("/clonesapp_websocker/actions/enviar_mensagem.php", {
@@ -55,7 +38,6 @@ function enviarMensagem() {
                 enviado_em: new Date().toISOString()
             });
 
-            input.value = "";
             scrollChatParaBaixo();
         }
     });

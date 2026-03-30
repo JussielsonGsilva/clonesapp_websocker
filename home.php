@@ -238,10 +238,15 @@ function carregarContatos() {
 
                 item.innerHTML = `
                     <div class="foto"></div>
-                    <div>${contato.nome}</div>
+                    <div class="nome">${contato.nome}</div>
                 `;
 
                 item.onclick = () => abrirChat(contato.id, contato.nome);
+
+                // garante que clicar nos filhos também chama abrirChat
+                item.querySelectorAll('*').forEach(el => {
+                    el.onclick = () => abrirChat(contato.id, contato.nome);
+                });
 
                 lista.appendChild(item);
             });
@@ -333,7 +338,11 @@ function abrirChat(contatoId, nomeContato) {
         });
 }
 </script>
+<script>
+    const USER_ID = <?= $_SESSION['user_id'] ?>;
+</script>
 
 <script src="public/js/chat.js"></script>
+<script src="public/js/websocket.js"></script>
 </body>
 </html>
