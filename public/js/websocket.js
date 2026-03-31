@@ -18,7 +18,13 @@ socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
     console.log("Mensagem recebida:", data);
 
-    // Só processa mensagens novas
+    // 🔥 1. Se for confirmação de entrega (✓✓)
+    if (data.acao === "mensagem_entregue") {
+        marcarMensagemComoEntregue(data.message_id);
+        return;
+    }
+
+    // 🔥 2. Só processa mensagens novas
     if (data.acao !== "nova_mensagem") return;
 
     // Se a mensagem não é para mim, ignora
@@ -29,13 +35,12 @@ socket.onmessage = (event) => {
         adicionarMensagemNaTela({
             sender_id: data.sender_id,
             conteudo: data.conteudo,
-            enviado_em: new Date().toISOString()
+            enviado_em: new Date().toISOString(),
+            message_id: data.message_id
         });
 
         scrollChatParaBaixo();
     }
-
-    // Caso queira futuramente: notificação para outros chats
 };
 
 // Quando desconectar

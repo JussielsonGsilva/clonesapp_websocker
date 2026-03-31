@@ -118,7 +118,13 @@ Para testar em PC + celular, você deve usar o IP da sua máquina, não localhos
 
 const socket = new WebSocket("ws://seu_ip:8080");
 
-
+O QUE FOI FEITO ATÉ AGORA:
+- Adicionada geração de message_id no front-end usando Date.now()
+- Envio do message_id incluído no payload do WebSocket
+- Ajustado adicionarMensagemNaTela() para aplicar data-id corretamente
+- Ajustado marcarMensagemComoEntregue() para localizar e atualizar o status da mensagem
+-Falta:
+- corrigido fluxo de entrega e exibição do status ✓✓
 
 ## ▶️ Como iniciar o servidor WebSocket
 No terminal, dentro da pasta do projeto:

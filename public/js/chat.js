@@ -37,7 +37,8 @@ function enviarMensagem() {
             adicionarMensagemNaTela({
                 sender_id: meuId,
                 conteudo: texto,
-                enviado_em: new Date().toISOString()
+                enviado_em: new Date().toISOString(),
+                message_id: res.message_id   // <-- ESSENCIAL PARA O ✓✓
             });
 
             scrollChatParaBaixo();
@@ -75,30 +76,23 @@ function adicionarMensagemNaTela(msg) {
 }
 
 function marcarMensagemComoEntregue(messageId) {
-    // Seleciona a mensagem enviada com o ID correto
-    const msgDiv = document.querySelector(`.msg-enviada[data-id="${messageId}"]`);
-
-    if (msgDiv) {
-        const statusSpan = msgDiv.querySelector(".msg-status");
-        if (statusSpan) {
-            statusSpan.textContent = "✓✓"; // Aqui você pode trocar por ícone depois
-        }
+    const msg = document.querySelector(`.msg-enviada[data-id="${messageId}"]`);
+    if (!msg) {
+        console.log("Mensagem não encontrada para marcar como entregue:", messageId);
+        return;
     }
 
-}
+    let status = msg.querySelector(".msg-status");
 
-function marcarMensagemComoEntregue(messageId) {
-    // Aqui você pode melhorar depois, mas por enquanto:
-    console.log("Mensagem entregue:", messageId);
-
-    // Exemplo simples: adicionar ✓✓ na última mensagem enviada
-    const mensagens = document.querySelectorAll(".msg-enviada .msg-hora");
-    if (mensagens.length > 0) {
-        const ultima = mensagens[mensagens.length - 1];
-        ultima.innerHTML += " ✓✓";
+    // Se não existir, cria
+    if (!status) {
+        status = document.createElement("span");
+        status.classList.add("msg-status");
+        msg.querySelector(".msg-hora").appendChild(status);
     }
-}
 
+    status.textContent = "✓✓";
+}
 
 // Scroll automático
 function scrollChatParaBaixo() {

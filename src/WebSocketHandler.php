@@ -46,7 +46,9 @@ class WebSocketHandler implements MessageComponentInterface
         // Enviar mensagem
         if ($data["acao"] === "enviar_mensagem") {
 
-            $messageId = $data["message_id"];
+            // 🔥 CORREÇÃO IMPORTANTE: garantir que o ID é numérico
+            $messageId = intval($data["message_id"]);
+
             $sender = $data["sender_id"];
             $receiver = $data["receiver_id"];
             $conteudo = $data["conteudo"];

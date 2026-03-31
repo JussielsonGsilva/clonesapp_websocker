@@ -15,6 +15,7 @@ $nomeUsuario = $_SESSION['user_nome'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ClonesApp - Chat</title>
+    <link rel="stylesheet" href="/public/css/chat.css">
 
 <style>
 body {
@@ -172,7 +173,7 @@ body {
     border-radius: 20px;
     cursor: pointer;
     font-size: 16px;
-}
+    }
 
 /* RESPONSIVO */
 @media (max-width: 480px) {
@@ -328,7 +329,7 @@ function abrirChat(contatoId, nomeContato) {
 
                 div.innerHTML = `
                     <div class="msg-texto">${msg.conteudo}</div>
-                    <div class="msg-hora">${horaFormatada}</div>
+                    <div class="msg-hora">${horaFormatada}<span class="msg-status"></span></div>
                 `;
 
                 mensagensDiv.appendChild(div);
